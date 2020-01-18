@@ -6,6 +6,7 @@ var aY = -0.5;
 var vY = 20;
 
 var balls = [];
+var trail = [];
 
 class Ball {
   constructor(sketch) {
@@ -23,14 +24,13 @@ class Ball {
 }
 
 const s = (sketch) => {
-
   sketch.setup = () => {
     sketch.createCanvas(640, 480);
   };
 
   sketch.draw = () => {
     sketch.background(255);
-  
+
     sketch.fill(0);
     sketch.textSize(30);
     sketch.textAlign(sketch.LEFT, sketch.TOP);
@@ -40,15 +40,29 @@ const s = (sketch) => {
       ball.update();
       sketch.ellipse(ball.x, ball.y, 80, 80);
     }
-  
+
     if (sketch.frameCount % 100 == 0) {
         balls.push(new Ball(sketch))
     }
     // Create mouse trail
     sketch.fill(255, 0, 0);
     sketch.ellipse(sketch.mouseX, sketch.mouseY, 10, 10);
+    if (trail.length > 0) {
+      var lastTrail = trail[trail.length - 1];
+      var distFromTrail = Math.sqrt((sketch.mouseX - lastTrail.x) ** 2 + (sketch.mouseY - lastTrail.y) ** 2);
+    }
+    if (trail.length == 0 || distFromTrail > 10) {
+      trail.push({x: sketch.mouseX, y: sketch.mouseY});
+    }
+
+    if (sketch.frameCount % 3 == 0 || trail.length > 10) {
+      trail.shift();
+    }
+
+    for (let i = 0; i < trail.length - 1; i++) {
+      sketch.line(trail[i].x, trail[i].y, trail[i + 1].x, trail[i + 1].y);
+    }
   }
-  
 };
 
 let myp5 = new p5(s);
