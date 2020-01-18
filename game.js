@@ -1,9 +1,20 @@
-const canvwidth = 640;
-const canvheight = 480;
+const s = ( sketch ) => {
 
-function setup() {
-  createCanvas(canvwidth, canvheight);
-}
+  let x = 100;
+  let y = 100;
+
+  sketch.setup = () => {
+    sketch.createCanvas(640, 480);
+  };
+
+  sketch.draw = () => {
+    sketch.background(0);
+    sketch.fill(255);
+    sketch.rect(x,y,50,50);
+  };
+};
+
+
 
 var ballX = 300;
 var ballY = 500;
@@ -29,8 +40,11 @@ class Ball {
 
 function draw() {
   background(255);
-  // if (fram)
+
   fill(0);
+  textSize(30);
+  textAlign(LEFT, TOP);
+  text('Score: ', 10, 10);
   for (let i = 0; i < balls.length; i++) {
     let ball = balls[i];
     ball.update();
@@ -40,4 +54,7 @@ function draw() {
   if (frameCount % 100 == 0) {
       balls.push(new Ball())
   }
+  // Create mouse trail
+  fill(255, 0, 0);
+  ellipse(mouseX, mouseY, 10, 10);
 }
