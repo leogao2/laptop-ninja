@@ -1,5 +1,5 @@
-const videoWidth = 600;
-const videoHeight = 500;
+const videoWidth = 160;
+const videoHeight = 90;
 
 // from: https://github.com/tensorflow/tfjs-models/blob/72787aa4d4af9e5cea4c31d11db412355b878b70/posenet/demos/camera.js
 async function setupCamera() {
@@ -40,15 +40,26 @@ async function loadVideo() {
 
 
 
+//from http://html5doctor.com/video-canvas-magic/
+function draw(v,c,w,h) {
+    if(v.paused || v.ended) return false;
+    c.drawImage(v,0,0,w,h);
+    setTimeout(draw,20,v,c,w,h);
+}
+
+//const ht = handTrack.load();
+var pn;
+var context;
+var hmodel;
+let cw = videoWidth, ch = videoHeight;
 $(document).ready(async () => {
-    // load posenet
-    const net = await posenet.load({
+    pn = await posenet.load({
         architecture: 'MobileNetV1',
         outputStride: 16,
-        inputResolution: { width: 640, height: 480 },
+        inputResolution: { width: cw, height: ch },
         multiplier: 0.75
     });
-    
+
     // load webcam feed
     let video;
 
@@ -59,12 +70,27 @@ $(document).ready(async () => {
       throw e;
     }
 
-    const pose = await net.estimateSinglePose(video, {
-        flipHorizontal: true,
-        decodingMethod: 'single-person'
-      });
+    var bufcanv = document.getElementById('buffer');
+    bufcanv.height = ch;
+    bufcanv.width = cw;
+    context = bufcanv.getContext('2d');
 
-    console.log(pose)
+    video.addEventListener('play', function(){
+        draw(this,context,cw,ch);
+        
+            //myWorker.postMessage(context.getImageData(0, 0, cw, ch));
+    },false);
 
+    //hmodel = await ht;
+        
+    let myp5 = new p5(mkgame());
 
 })
+
+function pred() {
+    //return hmodel.detect(context.getImageData(0, 0, cw, ch))
+    return pn.estimateSinglePose(context.getImageData(0, 0, cw, ch), {
+        flipHorizontal: true,
+        decodingMethod: 'single-person'
+    })
+}

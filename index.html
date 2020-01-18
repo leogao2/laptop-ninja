@@ -3,13 +3,21 @@
 <html>
     <head>
         <title>Laptop Ninja</title>
+        <style>
+            body {
+                margin: 0
+            }
+        </style>
     </head>
     <body>
-        <video id="video" playsinline>
+
+
+        <video id="video" playsinline style="display:none">
             </video>
+        
+        <canvas id="buffer" style="display: none"></canvas>
 
 
-        <canvas id="gameCanvas"></canvas>
         <script
             src="https://code.jquery.com/jquery-3.4.1.min.js"
             integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
@@ -19,7 +27,27 @@
 
         <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
         <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/posenet"></script>
-        <script src="pose.js"></script>
         <script src="game.js"></script>
+
+        <script>
+                const worker_function = () => {
+        
+                    onmessage =  () => {
+                        console.log('from web worker')
+                            this.window = this
+                            importScripts('https://cdn.jsdelivr.net/npm/setimmediate@1.0.5/setImmediate.min.js')
+                            importScripts('https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@0.10.3')
+                            tf.setBackend('cpu')
+                            
+                            const res = tf.zeros([1, 2]).add(tf.ones([1, 2]))
+                            res.print()
+                            
+                            postMessage({res: res.dataSync(), shape: res.shape})
+                    };
+                }
+                if (window != self)
+                    worker_function();
+        </script>
+        <script src="pose.js"></script>
     </body>
 </html>
