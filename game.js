@@ -54,12 +54,20 @@ function mkgame() {
 
     sketch.setup = () => {
       sketch.createCanvas(window.innerWidth - 5, window.innerHeight - 5);
-      sketch.f
+      for (let i = 0; i < images.length; i++) {
+        let image = images[i];
+        let leftImage = image.get(0, 0, image.width/2, image.height);
+        let rightImage = image.get(image.width/2, 0, image.width/2, image.height);
+        imageHalfs.push(leftImage);
+        imageHalfs.push(rightImage);
+      }
     };
+    
     sketch.preload = () => {
-      let imageList = ['apple.png', 'pear.png', 'watermelon.png', 'plum.png'];
+      let imageList = ['apple.png', 'pear.png', 'watermelon.png', 'plum.png', 'peach.png'];
       for (let i = 0; i < imageList.length; i++) {
-        images.push(sketch.loadImage('img/' + imageList[i]));
+        let image = sketch.loadImage('img/' + imageList[i]);
+        images.push(image);
       }
       backgroundImg = sketch.loadImage('img/background.png');
     }
@@ -89,15 +97,13 @@ function mkgame() {
         if (ball.sliced) {
         } else if (distFromCenter < ball.r) {
           ball.sliced = true;
-          balls.splice(i, 1)
+          balls.splice(i, 1);
+          i--;
           points++;
-          let leftImage = image.get(0, 0, image.width/2, image.height);
-          let rightImage = image.get(image.width/2, 0, image.width/2, image.height);
-          imageHalfs.push(leftImage);
-          imageHalfs.push(rightImage);
+
 
           let leftBallHalf = new Ball(sketch);
-          leftBallHalf.imageIndex = ballHalfs.length;
+          leftBallHalf.imageIndex = ball.imageIndex * 2;
           leftBallHalf.x = ball.x;
           leftBallHalf.y = ball.y;
           leftBallHalf.vX = ball.vX - 3;
@@ -106,7 +112,7 @@ function mkgame() {
           ballHalfs.push(leftBallHalf);
 
           let rightBallHalf = new Ball(sketch);
-          rightBallHalf.imageIndex = ballHalfs.length;
+          rightBallHalf.imageIndex = ball.imageIndex * 2 + 1;
           rightBallHalf.x = ball.x + image.width/2;
           rightBallHalf.y = ball.y;
           rightBallHalf.vX = ball.vX + 3;
@@ -114,14 +120,13 @@ function mkgame() {
           rightBallHalf.sliced = true;
           ballHalfs.push(rightBallHalf);
 
-        }
-        if (ball.y > sketch.height) {
+        } else if (ball.y > sketch.height) {
           balls.splice(i, 1);
+          i--;
         }
 
         image.resize(ball.r * 2, 0);
-        sketch.image(image, ball.x - ball.r, ball.y - ball.r);
-        sketch.fill(0);
+        sketch.image(image, ball.x - ball.r, ball.y - image.height/2);
       }
 
       for (let i = 0; i < ballHalfs.length; i++) {
@@ -129,11 +134,15 @@ function mkgame() {
         let image = imageHalfs[ballHalf.imageIndex];
         ballHalf.update();
         image.resize(ballHalf.r, 0);
-        sketch.image(image, ballHalf.x - ballHalf.r, ballHalf.y - ballHalf.r);
+        sketch.image(image, ballHalf.x - ballHalf.r, ballHalf.y - image.height/2);
+        if (ballHalf.y > sketch.height) {
+          ballHalfs.splice(i, 1);
+          i--;
+        }
       }
 
 
-      if (sketch.frameCount % 50 == 0) {
+      if (sketch.frameCount % 10 == 0) {
           balls.push(new Ball(sketch))
       }
       const trailThickness = 10;
