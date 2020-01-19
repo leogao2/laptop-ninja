@@ -97,7 +97,13 @@ var cansend = true;
 socket.addEventListener('message', function (event) {
     //console.log('Message from server ', event.data);
     cansend = true
-    let xy = JSON.parse(event.data).rightWrist.coords
+    let parsed = JSON.parse(event.data)
+    let xy;
+
+    if (parsed.leftWrist.score > parsed.rightWrist.score)
+        xy = parsed.leftWrist.coords
+    else
+        xy = parsed.rightWrist.coords
     console.log('delay', Date.now() - sendtime, 'ms')
     set_user_pos(videoWidth - xy[1], xy[0])
 });
