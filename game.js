@@ -62,7 +62,7 @@ function mkgame() {
         imageHalfs.push(rightImage);
       }
     };
-    
+
     sketch.preload = () => {
       let imageList = ['apple.png', 'pear.png', 'watermelon.png', 'plum.png', 'peach.png'];
       for (let i = 0; i < imageList.length; i++) {
@@ -142,7 +142,7 @@ function mkgame() {
       }
 
 
-      if (sketch.frameCount % 10 == 0) {
+      if (sketch.frameCount % 40 == 0) {
           balls.push(new Ball(sketch))
       }
       const trailThickness = 10;
