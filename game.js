@@ -5,6 +5,7 @@ var ballHalfs = [];
 var trail = [];
 var images = [];
 var imageHalfs = [];
+var textDisplay = [];
 
 class Ball {
   constructor(sketch) {
@@ -120,6 +121,9 @@ function mkgame() {
           rightBallHalf.sliced = true;
           ballHalfs.push(rightBallHalf);
 
+          // +1 text
+          textDisplay.push({x: ball.x, y: ball.y - 80, text: '+1', opacity: 1});
+
         } else if (ball.y > sketch.height) {
           balls.splice(i, 1);
           i--;
@@ -141,6 +145,15 @@ function mkgame() {
         }
       }
 
+      sketch.strokeWeight(2);
+      for (let i = 0; i < textDisplay.length; i++) {
+        let textObj = textDisplay[i];
+        sketch.fill(255, 255, 255, 255 * textObj.opacity);
+        sketch.stroke(0, 0, 0, 255 * textObj.opacity);
+        sketch.text(textObj.text, textObj.x, textObj.y);
+        textObj.opacity -= 0.05;
+        textObj.y -= 2;
+      }
 
       if (sketch.frameCount % 40 == 0) {
           balls.push(new Ball(sketch))
