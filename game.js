@@ -41,23 +41,23 @@ class Ball {
 
 var px = 0, py = 0;
 var newpx = 0, newpy = 0;
-function mkgame() {                                                                                                                                                                                                                                   
+function mkgame() {
   return (sketch) => {
     var appleImg;
-  
+
     sketch.setup = () => {
       sketch.createCanvas(window.innerWidth - 5, window.innerHeight - 5);
     };
     sketch.preload = () => {
-      let imageList = ['apple.png', 'pear.png', 'watermelon.png', 'peach.png', 'pineapple.png'];
+      let imageList = ['apple.png', 'pear.png', 'watermelon.png', 'plum.png'];
       for (let i = 0; i < imageList.length; i++) {
         images.push(sketch.loadImage('img/' + imageList[i]));
       }
     }
-  
+
     sketch.draw = () => {
       sketch.background(255);
-    
+
       sketch.fill(0);
       sketch.textSize(30);
       sketch.textAlign(sketch.LEFT, sketch.TOP);
@@ -78,8 +78,8 @@ function mkgame() {
         sketch.image(image, ball.x - ball.r, ball.y - ball.r);
         sketch.fill(0);
       }
-  
-    
+
+
       if (sketch.frameCount % 50 == 0) {
           balls.push(new Ball(sketch))
       }
@@ -96,26 +96,26 @@ function mkgame() {
       if (trail.length == 0 || distFromTrail > 10) {
         trail.push({x: px, y: py});
       }
-  
+
       if (sketch.frameCount % 4 == 0 || trail.length > 15) {
         trail.shift();
       }
-  
+
       for (let i = 0; i < trail.length - 1; i++) {
         // Get thicker closer to point
         sketch.strokeWeight(trail.length * i/trailThickness);
         sketch.stroke(255, 0, 0);
         sketch.line(trail[i].x, trail[i].y, trail[i + 1].x, trail[i + 1].y);
-  
+
         // Reset to default
         sketch.strokeWeight(1);
         sketch.stroke(255);
       }
-    
+
 
 
       if (sketch.frameCount % 2 == 0) {
-        
+
         pred().then(preds => {
           //console.log(preds)
           //console.log(preds.keypoints[0].position)
@@ -153,6 +153,6 @@ function mkgame() {
       px = smoothingfactor * px + (1 - smoothingfactor) * newpx
       py = smoothingfactor * py + (1 - smoothingfactor) * newpy
     }
-    
+
   };
 }
