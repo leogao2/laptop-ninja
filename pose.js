@@ -90,17 +90,17 @@ $(document).ready(async () => {
 
 })
 
-var mode = 'server';
-const socket = new WebSocket('ws://35.222.136.238:8765');
-
-var cansend = true;
-socket.addEventListener('message', function (event) {
-    //console.log('Message from server ', event.data);
-    cansend = true
-    let xy = JSON.parse(event.data).rightWrist.coords
-    console.log('delay', Date.now() - sendtime, 'ms')
-    set_user_pos(videoWidth - xy[1], xy[0])
-});
+var mode = '';
+// const socket = new WebSocket('ws://35.222.136.238:8765');
+//
+// var cansend = true;
+// socket.addEventListener('message', function (event) {
+//     //console.log('Message from server ', event.data);
+//     cansend = true
+//     let xy = JSON.parse(event.data).rightWrist.coords
+//     console.log('delay', Date.now() - sendtime, 'ms')
+//     set_user_pos(videoWidth - xy[1], xy[0])
+// });
 
 var sendtime = -1
 function pred() {

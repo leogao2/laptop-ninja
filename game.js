@@ -46,7 +46,8 @@ function set_user_pos(x, y) {
   console.log(x / videoWidth, y / videoHeight)
 }
 
-function mkgame() {                                                                                                                                                                                                                                   
+function mkgame() {
+  var backgroundImg;
   return (sketch) => {
     globalsketch = sketch;
     var appleImg;
@@ -60,10 +61,12 @@ function mkgame() {
       for (let i = 0; i < imageList.length; i++) {
         images.push(sketch.loadImage('img/' + imageList[i]));
       }
+      backgroundImg = sketch.loadImage('img/background.png');
     }
 
     sketch.draw = () => {
-      sketch.background(255,222,173);
+      backgroundImg.resize(sketch.width, sketch.height);
+      sketch.image(backgroundImg, 0, 0);
 
       sketch.fill(0);
       sketch.textSize(40);
@@ -131,6 +134,7 @@ function mkgame() {
       const trailThickness = 10;
       // Create mouse trail
       sketch.fill(255, 0, 0);
+      sketch.stroke(255, 0, 0);
       //console.log(sketch.mouseX, sketch.mouseY)
       sketch.ellipse(px, py, 10, 10);
 
@@ -149,14 +153,12 @@ function mkgame() {
       for (let i = 0; i < trail.length - 1; i++) {
         // Get thicker closer to point
         sketch.strokeWeight(trail.length * i/trailThickness);
-        sketch.stroke(255, 0, 0);
         sketch.line(trail[i].x, trail[i].y, trail[i + 1].x, trail[i + 1].y);
-
-        // Reset to default
-        sketch.strokeWeight(1);
-        sketch.stroke(255);
       }
-    
+      // Reset to default
+      sketch.strokeWeight(0);
+      sketch.stroke(0);
+
       if (sketch.frameCount % 2 == 0) {
 
         pred().then(preds => {
