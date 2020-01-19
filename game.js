@@ -38,7 +38,7 @@ function set_user_pos(x, y) {
 
   rawx = x
   rawy = y
-  
+
   newpx = x / videoWidth * globalsketch.width
   newpx = stretchcoord(newpx, globalsketch.width, 1.3)
   newpy = y / videoHeight * globalsketch.height
