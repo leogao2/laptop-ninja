@@ -1,5 +1,5 @@
-const videoWidth = 160 * 3;
-const videoHeight = 90 * 3;
+const videoWidth = 160 * 4;
+const videoHeight = 90 * 4;
 
 // from: https://github.com/tensorflow/tfjs-models/blob/72787aa4d4af9e5cea4c31d11db412355b878b70/posenet/demos/camera.js
 async function setupCamera() {
@@ -52,6 +52,7 @@ var pn;
 var context;
 var hmodel;
 let cw = videoWidth, ch = videoHeight;
+var bufcanv = document.getElementById('buffer');
 $(document).ready(async () => {
     pn = await posenet.load({
         architecture: 'MobileNetV1',
@@ -70,7 +71,6 @@ $(document).ready(async () => {
       throw e;
     }
 
-    var bufcanv = document.getElementById('buffer');
     bufcanv.height = ch;
     bufcanv.width = cw;
     context = bufcanv.getContext('2d');
@@ -90,10 +90,36 @@ $(document).ready(async () => {
 
 })
 
+var mode = 'server';
+const socket = new WebSocket('ws://35.222.136.238:8765');
+
+var cansend = true;
+socket.addEventListener('message', function (event) {
+    //console.log('Message from server ', event.data);
+    cansend = true
+    let xy = JSON.parse(event.data).rightWrist.coords
+    console.log('delay', Date.now() - sendtime, 'ms')
+    set_user_pos(videoWidth - xy[1], xy[0])
+});
+
+var sendtime = -1
 function pred() {
     //return hmodel.detect(context.getImageData(0, 0, cw, ch))
     let single = true;
-    if (single) {
+    if (mode === 'server') {
+        if (!cansend) {
+            return new Promise((resolve, reject) => {
+                resolve(null);
+            })
+        }
+        cansend = false
+        print('sending msg')
+        socket.send(bufcanv.toDataURL())
+        sendtime = Date.now()
+        return new Promise((resolve, reject) => {
+            resolve(null);
+        })
+    } else if (single) {
         return pn.estimateSinglePose(context.getImageData(0, 0, cw, ch), {
             flipHorizontal: true,
             decodingMethod: 'single-person'
