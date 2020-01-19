@@ -28,10 +28,27 @@ class Ball {
 var px = 0, py = 0;
 var rawx = 0, rawy = 0;
 var newpx = 0, newpy = 0;
+var globalsketch;
 
+function set_user_pos(x, y) {
+  if (!globalsketch) return
+  function stretchcoord(x, size, factor) {
+    return (x - size / 2) * factor + size / 2
+  }
+
+  rawx = x
+  rawy = y
+
+  newpx = x / videoWidth * globalsketch.width
+  newpx = stretchcoord(newpx, globalsketch.width, 1.3)
+  newpy = y / videoHeight * globalsketch.height
+  newpy = stretchcoord(newpy, globalsketch.height, 1.3)
+  console.log(x / videoWidth, y / videoHeight)
+}
 
 function mkgame() {
   return (sketch) => {
+    globalsketch = sketch;
     var appleImg;
 
     sketch.setup = () => {
@@ -140,11 +157,10 @@ function mkgame() {
         sketch.stroke(255);
       }
 
-
-
       if (sketch.frameCount % 2 == 0) {
 
         pred().then(preds => {
+          if (!preds) return;
           //console.log(preds)
           //console.log(preds.keypoints[0].position)
           let searchpart = 'rightWrist';
@@ -164,11 +180,7 @@ function mkgame() {
 
           rawx = preds.keypoints[i].position.x
           rawy = preds.keypoints[i].position.y
-          newpx = preds.keypoints[i].position.x / videoWidth * sketch.width
-          newpx = stretchcoord(newpx, sketch.width, 1.3)
-          newpy = preds.keypoints[i].position.y / videoHeight * sketch.height
-          newpy = stretchcoord(newpy, sketch.height, 1.3)
-          // console.log(i, preds.keypoints, preds.keypoints[i].position.x / videoWidth, preds.keypoints[i].position.y / videoHeight)
+          set_user_pos(rawx, rawy)
           //if (preds.length > 0) {
           //  let x = (preds[0].bbox[0] + preds[0].bbox[2]) / 2;
           //  let y = (preds[0].bbox[1] + preds[0].bbox[3]) / 2;
@@ -179,7 +191,7 @@ function mkgame() {
         })
 
       }
-      let smoothingfactor = 0.5
+      let smoothingfactor = 0.95
 
       px = smoothingfactor * px + (1 - smoothingfactor) * newpx
       py = smoothingfactor * py + (1 - smoothingfactor) * newpy
