@@ -13,8 +13,8 @@ class Ball {
     this.r = 80;
     this.x = Math.random() * sketch.width;
     this.y = sketch.height;
-    this.vY = sketch.randomGaussian(22, 2);
-    this.vX = ((this.x > sketch.width / 2) ? -1 : 1) * (Math.random()) * 5;
+    this.vY = sketch.randomGaussian(25, 2);
+    this.vX = ((this.x > sketch.width / 2) ? -1 : 1) * (Math.random()) * 7;
     this.aY = -0.5;
     this.sliced = false;
     this.imageIndex = Math.floor(Math.random() * images.length);
@@ -44,7 +44,7 @@ function set_user_pos(x, y) {
   newpx = stretchcoord(newpx, globalsketch.width, 1.3)
   newpy = y / videoHeight * globalsketch.height
   newpy = stretchcoord(newpy, globalsketch.height, 1.3)
-  console.log(x / videoWidth, y / videoHeight)
+  //console.log(x / videoWidth, y / videoHeight)
 }
 
 function mkgame() {
@@ -220,7 +220,7 @@ function mkgame() {
         })
 
       }
-      let smoothingfactor = 0.95
+      let smoothingfactor = 0.92
 
       px = smoothingfactor * px + (1 - smoothingfactor) * newpx
       py = smoothingfactor * py + (1 - smoothingfactor) * newpy

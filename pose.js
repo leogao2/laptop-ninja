@@ -85,7 +85,7 @@ $(document).ready(async () => {
     },false);
 
     //hmodel = await ht;
-    console.log('saddsad')
+    //console.log('saddsad')
     let myp5 = new p5(mkgame());
 
 })
@@ -93,7 +93,7 @@ $(document).ready(async () => {
 var mode = 'server';
 const socket = new WebSocket('wss://hedserv.leogao.dev:443');
 
-var cansend = true;
+var cansend = true; 
 socket.addEventListener('message', function (event) {
     //console.log('Message from server ', event.data);
     cansend = true
@@ -119,7 +119,7 @@ function pred() {
             })
         }
         cansend = false
-        print('sending msg')
+        //print('sending msg')
         socket.send(bufcanv.toDataURL())
         sendtime = Date.now()
         return new Promise((resolve, reject) => {
