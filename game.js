@@ -68,11 +68,16 @@ function mkgame() {
       backgroundImg.resize(sketch.width, sketch.height);
       sketch.image(backgroundImg, 0, 0);
 
-      sketch.fill(0);
-      sketch.textSize(40);
+      // display score
+      sketch.fill(255, 140, 0);
+      sketch.textSize(100);
+      sketch.stroke(0);
+      sketch.strokeWeight(5);
+      sketch.textStyle(BOLD);
       sketch.textAlign(sketch.LEFT, sketch.TOP);
-      sketch.text('Score: ' + points, 10, 10);
+      sketch.text(points, 10, 10);
       sketch.textSize(50);
+
       sketch.textAlign(sketch.CENTER, sketch.TOP);
 
       for (let i = 0; i < balls.length; i++) {
