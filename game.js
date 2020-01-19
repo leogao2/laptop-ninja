@@ -21,6 +21,7 @@ class Ball {
     this.aY = -0.5;
     this.sliced = false;
     this.imageIndex = Math.floor(Math.random() * images.length);
+    this.opacity = 1;
   }
   update() {
     this.x += this.vX;
@@ -29,7 +30,9 @@ class Ball {
 
     // hit detection
     let distFromCenter = Math.sqrt((this.x - this.sketch.mouseX) ** 2 + (this.y - this.sketch.mouseY) ** 2);
-    if (!this.sliced && distFromCenter < this.r) {
+    if (this.sliced) {
+      this.opacity -= 0.1;
+    } else if (distFromCenter < this.r) {
       this.sliced = true;
       points++;
     }
@@ -71,6 +74,7 @@ function mkgame() {
         }
         let image = images[ball.imageIndex];
         image.resize(ball.r * 2, 0);
+        sketch.tint(255, ball.opacity * 255);
         sketch.image(image, ball.x - ball.r, ball.y - ball.r);
         sketch.fill(0);
       }
@@ -107,6 +111,7 @@ function mkgame() {
         sketch.strokeWeight(1);
         sketch.stroke(255);
       }
+    
 
 
       if (sketch.frameCount % 2 == 0) {
