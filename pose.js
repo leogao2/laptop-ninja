@@ -79,7 +79,7 @@ $(document).ready(async () => {
 
     video.addEventListener('play', function(){
         draw(this,context,cw,ch);
-        
+
           // debug display
             //myWorker.postMessage(context.getImageData(0, 0, cw, ch));
     },false);
