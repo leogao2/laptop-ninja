@@ -1,6 +1,7 @@
 var points = 0;
 
 var balls = [];
+var ballHalfs = [];
 var trail = [];
 var images = [];
 var imageHalfs = [];
@@ -16,16 +17,11 @@ class Ball {
     this.aY = -0.5;
     this.sliced = false;
     this.imageIndex = Math.floor(Math.random() * images.length);
-    this.opacity = 1;
   }
   update() {
     this.x += this.vX;
     this.y -= this.vY;
     this.vY += this.aY;
-
-    if (this.sliced) {
-      this.opacity -= 0.1;
-    }
   }
 }
 
@@ -61,23 +57,54 @@ function mkgame() {
 
       for (let i = 0; i < balls.length; i++) {
         let ball = balls[i];
+        let image = images[ball.imageIndex];
         ball.update();
         // hit detection
         let distFromCenter = Math.sqrt((ball.x - px) ** 2 + (ball.y - py) ** 2);
         if (ball.sliced) {
-          sketch.fill(255, 0, 0);
         } else if (distFromCenter < ball.r) {
           ball.sliced = true;
+          balls.splice(i, 1)
           points++;
+          let leftImage = image.get(0, 0, image.width/2, image.height);
+          let rightImage = image.get(image.width/2, 0, image.width/2, image.height);
+          imageHalfs.push(leftImage);
+          imageHalfs.push(rightImage);
+
+          let leftBallHalf = new Ball(sketch);
+          leftBallHalf.imageIndex = ballHalfs.length;
+          leftBallHalf.x = ball.x;
+          leftBallHalf.y = ball.y;
+          leftBallHalf.vX = ball.vX - 3;
+          leftBallHalf.vY = ball.vY;
+          leftBallHalf.sliced = true;
+          ballHalfs.push(leftBallHalf);
+
+          let rightBallHalf = new Ball(sketch);
+          rightBallHalf.imageIndex = ballHalfs.length;
+          rightBallHalf.x = ball.x + image.width/2;
+          rightBallHalf.y = ball.y;
+          rightBallHalf.vX = ball.vX + 3;
+          rightBallHalf.vY = ball.vY;
+          rightBallHalf.sliced = true;
+          ballHalfs.push(rightBallHalf);
+
         }
         if (ball.y > sketch.height) {
           balls.splice(i, 1);
         }
-        let image = images[ball.imageIndex];
+
         image.resize(ball.r * 2, 0);
-        sketch.tint(255, ball.opacity * 255);
         sketch.image(image, ball.x - ball.r, ball.y - ball.r);
         sketch.fill(0);
+      }
+
+      for (let i = 0; i < ballHalfs.length; i++) {
+        let ballHalf = ballHalfs[i];
+        let image = imageHalfs[ballHalf.imageIndex];
+        ballHalf.update();
+        image.resize(ballHalf.r, 0);
+        sketch.image(image, ballHalf.x - ballHalf.r, ballHalf.y - ballHalf.r);
       }
 
 
