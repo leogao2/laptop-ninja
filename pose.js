@@ -91,7 +91,7 @@ $(document).ready(async () => {
 })
 
 var mode = 'server';
-const socket = new WebSocket('ws://35.222.136.238:8765');
+const socket = new WebSocket('wss://hedserv.leogao.dev:443');
 
 var cansend = true;
 socket.addEventListener('message', function (event) {
