@@ -79,7 +79,7 @@ $(document).ready(async () => {
 
     video.addEventListener('play', function(){
         draw(this,context,cw,ch);
-        
+
           // debug display
             //myWorker.postMessage(context.getImageData(0, 0, cw, ch));
     },false);
@@ -92,7 +92,7 @@ $(document).ready(async () => {
 
 function pred() {
     //return hmodel.detect(context.getImageData(0, 0, cw, ch))
-    let single = true;
+    let single = false;
     if (single) {
         return pn.estimateSinglePose(context.getImageData(0, 0, cw, ch), {
             flipHorizontal: true,
