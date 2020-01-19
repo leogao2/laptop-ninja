@@ -37,6 +37,7 @@ class Ball {
 }
 
 var px = 0, py = 0;
+var newpx = 0, newpy = 0;
 function mkgame() {                                                                                                                                                                                                                                   
   return (sketch) => {
     var appleImg;
@@ -78,6 +79,7 @@ function mkgame() {
       if (sketch.frameCount % 50 == 0) {
           balls.push(new Ball(sketch))
       }
+      const trailThickness = 10;
       // Create mouse trail
       sketch.fill(255, 0, 0);
       //console.log(sketch.mouseX, sketch.mouseY)
@@ -107,13 +109,30 @@ function mkgame() {
       }
 
 
-      if (sketch.frameCount % 3 == 0) {
+      if (sketch.frameCount % 2 == 0) {
         
         pred().then(preds => {
+          //console.log(preds)
           //console.log(preds.keypoints[0].position)
-          px = preds.keypoints[0].position.x / videoWidth * sketch.width
-          py = preds.keypoints[0].position.y / videoHeight * sketch.height
-          console.log(px, py)
+          let searchpart = 'rightWrist';
+          let i = 0
+          if (preds.length == 0)
+            preds = preds[0]
+          for(obj of preds.keypoints) {
+            if (obj.part == searchpart) break
+            i++
+          }
+
+
+          function stretchcoord(x, size, factor) {
+            return (x - size / 2) * factor + size / 2
+          }
+          if ( preds.keypoints[i].score < 0.2) return
+          newpx = preds.keypoints[i].position.x / videoWidth * sketch.width
+          newpx = stretchcoord(newpx, sketch.width, 1.2)
+          newpy = preds.keypoints[i].position.y / videoHeight * sketch.height
+          newpy = stretchcoord(newpy, sketch.height, 1.2)
+          console.log(i, preds.keypoints, preds.keypoints[i].position.x / videoWidth, preds.keypoints[i].position.y / videoHeight)
           //if (preds.length > 0) {
           //  let x = (preds[0].bbox[0] + preds[0].bbox[2]) / 2;
           //  let y = (preds[0].bbox[1] + preds[0].bbox[3]) / 2;
@@ -122,7 +141,12 @@ function mkgame() {
           //  py = y
           //}
         })
+
       }
+      let smoothingfactor = 0.5
+
+      px = smoothingfactor * px + (1 - smoothingfactor) * newpx
+      py = smoothingfactor * py + (1 - smoothingfactor) * newpy
     }
     
   };

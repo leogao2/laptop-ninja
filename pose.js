@@ -1,5 +1,5 @@
-const videoWidth = 160;
-const videoHeight = 90;
+const videoWidth = 160 * 3;
+const videoHeight = 90 * 3;
 
 // from: https://github.com/tensorflow/tfjs-models/blob/72787aa4d4af9e5cea4c31d11db412355b878b70/posenet/demos/camera.js
 async function setupCamera() {
@@ -74,6 +74,8 @@ $(document).ready(async () => {
     bufcanv.height = ch;
     bufcanv.width = cw;
     context = bufcanv.getContext('2d');
+    //context.translate(cw, 0);
+    //context.scale(-1, 1);
 
     video.addEventListener('play', function(){
         draw(this,context,cw,ch);
@@ -82,15 +84,25 @@ $(document).ready(async () => {
     },false);
 
     //hmodel = await ht;
-        
+    console.log('saddsad')
     let myp5 = new p5(mkgame());
 
 })
 
 function pred() {
     //return hmodel.detect(context.getImageData(0, 0, cw, ch))
-    return pn.estimateSinglePose(context.getImageData(0, 0, cw, ch), {
-        flipHorizontal: true,
-        decodingMethod: 'single-person'
-    })
+    let single = true;
+    if (single) {
+        return pn.estimateSinglePose(context.getImageData(0, 0, cw, ch), {
+            flipHorizontal: true,
+            decodingMethod: 'single-person'
+        })
+    } else {
+        return pn.estimateMultiplePoses(context.getImageData(0, 0, cw, ch), {
+            flipHorizontal: true,
+            maxDetections: 1,
+            scoreThreshold: 0.1,
+            nmsRadius: 20
+        })
+    }
 }
