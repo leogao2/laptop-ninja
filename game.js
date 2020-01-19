@@ -13,7 +13,7 @@ var images = [];
 class Ball {
   constructor(sketch) {
     this.sketch = sketch;
-    this.r = 40;
+    this.r = 80;
     this.x = Math.random() * sketch.width;
     this.y = sketch.height;
     this.vY = sketch.randomGaussian(22, 2);
@@ -29,7 +29,7 @@ class Ball {
     this.vY += this.aY;
 
     // hit detection
-    let distFromCenter = Math.sqrt((this.x - this.sketch.mouseX) ** 2 + (this.y - this.sketch.mouseY) ** 2);
+    let distFromCenter = Math.sqrt((this.x - px) ** 2 + (this.y - py) ** 2);
     if (this.sliced) {
       this.opacity -= 0.1;
     } else if (distFromCenter < this.r) {
@@ -40,6 +40,7 @@ class Ball {
 }
 
 var px = 0, py = 0;
+var rawx = 0, rawy = 0;
 var newpx = 0, newpy = 0;
 function mkgame() {                                                                                                                                                                                                                                   
   return (sketch) => {
@@ -47,6 +48,7 @@ function mkgame() {
   
     sketch.setup = () => {
       sketch.createCanvas(window.innerWidth - 5, window.innerHeight - 5);
+      sketch.f
     };
     sketch.preload = () => {
       let imageList = ['apple.png', 'pear.png', 'watermelon.png', 'peach.png', 'pineapple.png'];
@@ -121,7 +123,7 @@ function mkgame() {
           //console.log(preds.keypoints[0].position)
           let searchpart = 'rightWrist';
           let i = 0
-          if (preds.length == 0)
+          if (preds.length == 1)
             preds = preds[0]
           for(obj of preds.keypoints) {
             if (obj.part == searchpart) break
@@ -133,10 +135,13 @@ function mkgame() {
             return (x - size / 2) * factor + size / 2
           }
           if ( preds.keypoints[i].score < 0.2) return
+          
+          rawx = preds.keypoints[i].position.x
+          rawy = preds.keypoints[i].position.y
           newpx = preds.keypoints[i].position.x / videoWidth * sketch.width
-          newpx = stretchcoord(newpx, sketch.width, 1.2)
+          newpx = stretchcoord(newpx, sketch.width, 1.3)
           newpy = preds.keypoints[i].position.y / videoHeight * sketch.height
-          newpy = stretchcoord(newpy, sketch.height, 1.2)
+          newpy = stretchcoord(newpy, sketch.height, 1.3)
           console.log(i, preds.keypoints, preds.keypoints[i].position.x / videoWidth, preds.keypoints[i].position.y / videoHeight)
           //if (preds.length > 0) {
           //  let x = (preds[0].bbox[0] + preds[0].bbox[2]) / 2;
@@ -152,6 +157,14 @@ function mkgame() {
 
       px = smoothingfactor * px + (1 - smoothingfactor) * newpx
       py = smoothingfactor * py + (1 - smoothingfactor) * newpy
+
+      context.beginPath();
+      context.arc(videoWidth - rawx, rawy, 5, 0, 2 * Math.PI, false);
+      context.fillStyle = 'red';
+      context.fill();
+      context.lineWidth = 5;
+      context.strokeStyle = '#330000';
+      context.stroke();
     }
     
   };

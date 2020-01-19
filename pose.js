@@ -29,7 +29,7 @@ async function setupCamera() {
     };
   });
 }
-
+//tf.setBackend('cpu')
 async function loadVideo() {
   const video = await setupCamera();
   video.play();
@@ -80,6 +80,7 @@ $(document).ready(async () => {
     video.addEventListener('play', function(){
         draw(this,context,cw,ch);
         
+          // debug display
             //myWorker.postMessage(context.getImageData(0, 0, cw, ch));
     },false);
 
